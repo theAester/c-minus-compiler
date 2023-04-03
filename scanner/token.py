@@ -1,4 +1,4 @@
-import read as rd
+from scanner.read import reader
 from typing import TextIO
 
 class token:
@@ -16,7 +16,7 @@ class whitespace(token):
     name  = "WHITESPACE"
 
     def check(char:str) -> bool:
-        return char in ['\t', '\n', '\u32', '\r', '\v', '\f']
+        return char in ['\t', '\n', ' ', '\r', '\v', '\f']
 
     def capture(char:str) -> (bool, str, str):
         string = ''
@@ -44,7 +44,7 @@ class symbol(token):
     def capture(char:str):
         string = ''
         while True:
-            if(char == '=')
+            if(char == '='):
                 lookahead = reader.next_char()
                 if(lookahead == None or not symbol.check(char, lookahead)):
                     return (False, '=', lookahead)
@@ -85,7 +85,7 @@ class text(token):
     def capture(char: str) -> (bool, str, str):
         string = ''
         while char != None:
-            if text.check(char):
+            if text.check(char) or number.check(char):
                 string = string + char
                 char = reader.next_char()
             else:
@@ -100,7 +100,7 @@ class keyword(token):
     keywords = ['if', 'else', 'void', 'int', 'repeat', 'break', 'until', 'return']
 
     def check(string:str) -> bool:
-        return string in keyword
+        return string in keyword.keywords
 
     def capture(char: str) -> (bool, str, str):
         pass
