@@ -20,15 +20,13 @@ class whitespace(token):
 
     def capture(char:str) -> (bool, str, str):
         string = ''
-        while True:
-            if(whitespace.check(char, nextchar) == True):
+        while char != None:
+            if(whitespace.check(char) == True):
                 string = string + char
             else:
                 break
-            nextchar = reader.next_char()
-            if(nextchar == None):
-                return (True, string, None)
-        return (False, string, nextchar)
+            char = reader.next_char()
+        return (False, string, char)
 
 class symbol(token):
     tid = 1
@@ -66,7 +64,7 @@ class number(token):
     def check(char: str) -> bool:
         return char.isnumeric()
 
-    def capture(char: str):
+    def capture(char: str) -> (bool, str, str):
         string = ''
         while char != None:
             if number.check(char):
@@ -76,3 +74,33 @@ class number(token):
                 break
 
         return (False, string, char)
+
+class text(token):
+    tid = -2
+    name = "text"
+
+    def check(char: str) -> bool:
+        return char.isalpha()
+
+    def capture(char: str) -> (bool, str, str):
+        string = ''
+        while char != None:
+            if text.check(char):
+                string = string + char
+                char = reader.next_char()
+            else:
+                break
+
+        return (False, string, char)
+
+class keyword(token):
+    tid = 3
+    name = "KEYWORD"
+
+    keywords = ['if', 'else', 'void', 'int', 'repeat', 'break', 'until', 'return']
+
+    def check(string:str) -> bool:
+        return string in keyword
+
+    def capture(char: str) -> (bool, str, str):
+        pass
