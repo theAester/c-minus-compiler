@@ -3,7 +3,7 @@ from scanner.read import reader
 #import scanner.panic as pc
 
 def get_next_token():
-    char = reader.next_char(infile)
+    char = reader.next_char()
     err = True
     lexeme = ''
     lineno = 1
@@ -22,5 +22,5 @@ def get_next_token():
         if(tk.symbols.check(char)):
             err, lexeme, char = tk.symbol.capture(char, infile)
             if err == False:
-
+                yield ('SYMBOL', lexeme, lineno)
             continue
