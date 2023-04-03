@@ -8,17 +8,17 @@ class token:
     def check(char: str, lookahead: str = None) -> bool:
         pass
 
-    def capture(char: str, infile: TextIO) -> (bool, str, str):
+    def capture(char: str) -> (bool, str, str):
         pass
 
 class whitespace(token):
     tid = 0
-    name  = "whitespace"
+    name  = "WHITESPACE"
 
     def check(char:str) -> bool:
         return char in ['\t', '\n', '\u32', '\r', '\v', '\f']
 
-    def capture(char:str, infile:TextIO) -> (bool, str, str):
+    def capture(char:str) -> (bool, str, str):
         string = ''
         while True:
             if(whitespace.check(char, nextchar) == True):
@@ -32,7 +32,7 @@ class whitespace(token):
 
 class symbol(token):
     tid = 1
-    name = "symbol"
+    name = "SYMBOL"
 
     syms = [';',':','[','(','{',']',')','}','+','-','*','=','<','/','==']
 
@@ -42,16 +42,37 @@ class symbol(token):
         else:
             return (char + lookahead) in symbol.syms
 
-    def capture(char:str, infile:TextIO):
+    # TODO: legacy code, fix this later
+    def capture(char:str):
         string = ''
         while True:
             if(char == '=')
                 lookahead = reader.next_char()
                 if(lookahead == None or not symbol.check(char, lookahead)):
-                    return (True, '=', lookahead)
+                    return (False, '=', lookahead)
                 else:
                     char = reader.next_char()
                     return (False, '==', char)
             else:
-                if(symbol.check())
+                if(symbol.check(char)):
+                    string = string + char
+                    char = reader.next_char()
+                    return (False, string, char)
 
+class number(token):
+    tid = 2
+    name = "NUMBER"
+
+    def check(char: str) -> bool:
+        return char.isnumeric()
+
+    def capture(char: str):
+        string = ''
+        while char != None:
+            if number.check(char):
+                string  = string + char
+                char = reader.next_char()
+            else:
+                break
+
+        return (False, string, char)
